@@ -19,32 +19,53 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class NewCustomer extends HttpServlet {
 
-   @Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String first = request.getParameter("firstname");
-		String last = request.getParameter("lastname");
-		String phone = request.getParameter("phone");
-		String address = request.getParameter("address");
-		String city = request.getParameter("city");
-		String state = request.getParameter("state");
-                String zipcode = request.getParameter("zipcode");
-		String email = request.getParameter("email");
-               
-                if("".equals(first))
-		{
-                        String someMessage = "Error !";
-                        PrintWriter out = response.getWriter();
-                        out.print("<html><head>");
-                        out.print("<script type=\"text/javascript\">alert(" + someMessage + ");</script>");
-                        out.print("</head><body></body></html>");
-			response.sendRedirect("index.html");
-                        
-			
-		}
-		else
-		{
-			
-			response.sendRedirect("success.html");
-		}
-	}
-	}
+     @Override
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response)
+            throws ServletException, IOException {
+        String url = "/newcust.html";
+        
+       
+        String action = request.getParameter("action");
+        if (action == null) {
+            action = "join";  // default action
+        }
+
+     
+        if (action.equals("join")) {
+            url = "/newcust.html";    
+        } 
+        else if (action.equals("add")) {
+            // get parameters from the request
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String address = request.getParameter("address");
+            String phone = request.getParameter("phone");
+            String city = request.getParameter("city");
+            String state = request.getParameter("state");
+            String zipcode = request.getParameter("zipcode");
+            String email = request.getParameter("email");
+
+            // store data in User object
+            User user = new User(firstName, lastName, email, address, city, state, zipcode, email);
+
+           
+            String message;
+            if (firstName == null || lastName == null || email == null || address == null || 
+                    city == null || state == null || zipcode == null || email == null ) {
+                url = "/newcust.html";
+            } 
+            else {
+                
+                url = "/newcust.jsp";
+                
+            }
+            request.setAttribute("user", user);
+            
+        }
+        getServletContext()
+                .getRequestDispatcher(url)
+                .forward(request, response);
+    }
+      
+}
